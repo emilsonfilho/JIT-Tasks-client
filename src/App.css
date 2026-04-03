@@ -3,3 +3,15 @@
 :root {
   color-scheme: light;
 }
+
+@layer utilities {
+  /* Oculta scrollbar para Chrome, Safari e Opera */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  /* Oculta scrollbar para Firefox, IE e Edge */
+  .no-scrollbar {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+}
