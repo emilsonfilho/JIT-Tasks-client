@@ -102,7 +102,7 @@ export default function TaskModal(props) {
                                     priority={priority} 
                                     isSelected={selectedPriority?.id === priority.id}
                                     onSelect={() => {
-                                        setSelectedPriority(priority)
+                                        setSelectedPriority(priority);
                                         setPriorityError(false);
                                     }}
                                 />
