@@ -13,6 +13,8 @@ export default function TaskModal(props) {
     const [dueDate, setDueDate] = useState(props.taskToEdit?.due_date ? props.taskToEdit?.due_date.split("T")[0] : "");
     const [selectedPriority, setSelectedPriority] = useState(null);
 
+    const [priorityError, setPriorityError] = useState(false);
+
     useEffect(() => {
         fetch('http://localhost:3000/priorities/')
             .then(response => response.json())
@@ -27,6 +29,13 @@ export default function TaskModal(props) {
 
     async function handleSubmit(e) {
         e.preventDefault();
+
+        if (!selectedPriority) {
+            setPriorityError(true);
+            return;
+        }
+
+        setPriorityError(false);
 
         try {
             const isEditing = !!props.taskToEdit;
@@ -70,6 +79,7 @@ export default function TaskModal(props) {
                         className="font-semibold text-2xl placeholder:text-gray-300 focus:outline-none" 
                         onChange={e => setTitle(e.target.value)}
                         value={title}
+                        required
                     />
                     <textarea 
                         name="description" 
@@ -78,6 +88,7 @@ export default function TaskModal(props) {
                         className="placeholder:text-gray-300 focus:outline-none w-full"
                         onChange={e => setDescription(e.target.value)}
                         value={description}
+                        required
                     ></textarea>
                 </fieldset>
                 <hr className="text-slate-200" />
@@ -90,10 +101,17 @@ export default function TaskModal(props) {
                                     key={priority.id} 
                                     priority={priority} 
                                     isSelected={selectedPriority?.id === priority.id}
-                                    onSelect={() => setSelectedPriority(priority)}
+                                    onSelect={() => {
+                                        setSelectedPriority(priority)
+                                        setPriorityError(false);
+                                    }}
                                 />
                             ))}
                         </div>
+
+                        {priorityError && (
+                            <span className="text-red-500 text-sm font-medium mt-[-1rem]">Por favor, selecione uma prioridade.</span>
+                        )}
                     </div>
                     <div className="flex flex-col gap-6">
                         <SectionTitle>Prazo</SectionTitle>
@@ -104,6 +122,7 @@ export default function TaskModal(props) {
                             className="w-50 focus:outline-none" 
                             onChange={e => setDueDate(e.target.value)}
                             value={dueDate}
+                            required
                         />
                     </div>
                 </fieldset>
