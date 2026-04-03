@@ -17,13 +17,13 @@ function App() {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const fetchPendingTasks = () => fetch('http://localhost:3000/tasks/pending')
-    .then(response => response.json())
-    .then(data => {
-      setPendingTasks(data);
-    });
-
-  useEffect(() => {
+  const fetchAllData = () => {
+    fetch('http://localhost:3000/tasks/pending')
+      .then(response => response.json())
+      .then(data => {
+        setPendingTasks(data);
+      });
+  };
     fetch('http://localhost:3000/tasks/metrics')
       .then(response => response.json())
       .then(data => {
@@ -31,15 +31,38 @@ function App() {
         setPendingAmount(data.pending);
         setCompletedAmount(data.done);
       });
+      
+      fetch('http://localhost:3000/tasks/finished')
+        .then(response => response.json())
+        .then(data =>{
+          setFinishedTasks(data);
+        });
 
-    fetchPendingTasks();
-
-    fetch('http://localhost:3000/tasks/finished')
-      .then(response => response.json())
-      .then(data =>{
-        setFinishedTasks(data);
-      });
+  useEffect(() => {
+    fetchAllData();
   }, []);
+
+  async function handleToggleTaskStatus(task) {
+    try {
+      const updatedTask = { ...task, is_finished: !task.is_finished };
+
+      const response = await fetch(`http://localhost:3000/tasks/${task.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updatedTask),
+      });
+
+      console.log('Resposta da API:', response);
+
+      if (response.ok) {
+        fetchAllData();
+      }
+    } catch (error) {
+      console.error("Erro ao atualizar status de tarefa:", error);
+    }
+  }
 
   return (
     <div className="flex bg-gray-200 text-slate-800 h-screen overflow-hidden">
@@ -64,6 +87,7 @@ function App() {
                     description={task.description}
                     dueDate={formatDate(task.due_date)}
                     isFinished={task.is_finished}
+                    onToggleStatus={() => handleToggleTaskStatus(task)}
                   />
                 ))}
               </ul>
@@ -82,6 +106,7 @@ function App() {
                     description={task.description}
                     dueDate={formatDate(task.due_date)}
                     isFinished={task.is_finished}
+                    onToggleStatus={() => handleToggleTaskStatus(task)}
                   />
                 ))}
               </ul>
@@ -93,7 +118,7 @@ function App() {
       <CreateTaskModal 
         isOpen={isModalOpen} 
         onClose={() => setIsModalOpen(false)} 
-        onTaskCreated={fetchPendingTasks}
+        onTaskCreated={fetchAllData}
       />
     </div>
   )
