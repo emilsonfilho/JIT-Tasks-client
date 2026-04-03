@@ -3,7 +3,7 @@ import React from 'react';
 
 export default function Sidebar() {
     return (
-        <aside className="w-72 h-screen bg-white flex flex-col justify-between border-r border-gray-100 p-6">
+        <aside className="w-72 h-screen flex flex-col justify-between border-r border-gray-200 p-6">
         {/* <aside className="w-72 bg-gray-100 p-4"> */}
           <div>
             <div className="mb-10 mt-2">
