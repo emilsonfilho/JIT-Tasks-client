@@ -5,8 +5,12 @@ import PrioritySelector from "../../tasks/PrioritySelector";
 import SectionTitle from "../../ui/SectionTitle";
 import { CircleFadingPlus } from "lucide-react";
 
-export default function CreateTaskModal(props) {
+export default function TaskModal(props) {
     const [priorities, setPriorities] = useState([]);
+
+    const [title, setTitle] = useState(props.taskToEdit?.title || "");
+    const [description, setDescription] = useState(props.taskToEdit?.description || "");
+    const [dueDate, setDueDate] = useState(props.taskToEdit?.due_date ? props.taskToEdit?.due_date.split("T")[0] : "");
     const [selectedPriority, setSelectedPriority] = useState(null);
 
     useEffect(() => {
@@ -14,34 +18,38 @@ export default function CreateTaskModal(props) {
             .then(response => response.json())
             .then(data => {
                 setPriorities(data);
-                console.log(data);
+                if (props.taskToEdit) {
+                    const taskPriority = data.find(priority => priority.id === props.taskToEdit.priority_id);
+                    setSelectedPriority(taskPriority);
+                }
             });
-    }, []);
+    }, [props.taskToEdit]);
 
     async function handleSubmit(e) {
         e.preventDefault();
 
         try {
-            const response = await fetch('http://localhost:3000/tasks/', {
-                method: 'POST',
+            const isEditing = !!props.taskToEdit;
+            const url = isEditing ? `http://localhost:3000/tasks/${props.taskToEdit.id}` : "http://localhost:3000/tasks/";
+            const method = isEditing ? 'PUT' : 'POST';
+            const response = await fetch(url, {
+                method: method,
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    title: e.target.querySelector('input[placeholder="Issue Title"]').value,
-                    description: e.target.querySelector('textarea').value,
+                    title: title,
+                    description: description,
                     priority_id: selectedPriority?.id,
-                    due_date: e.target.querySelector('input[type="date"]').value
+                    due_date: dueDate,
+                    is_finished: props.taskToEdit ? props.taskToEdit.is_finished : false
                 })
             });
 
-            await response.json();
-
-            if (response.ok) {
-                props.onTaskCreated();
-
-                props.onClose();
-            }
+           if (response.ok) {
+            if (props.onTaskSaved) props.onTaskSaved();
+            if (props.onClose) props.onClose();
+           }
         } catch (error) {
             console.log("Erro ao criar tarefa:", error);
         }
@@ -56,8 +64,21 @@ export default function CreateTaskModal(props) {
         >
             <form onSubmit={handleSubmit} className="flex flex-col gap-8">
                 <fieldset className="flex flex-col gap-4">
-                    <input type="text" placeholder="Issue Title" className="font-semibold text-2xl placeholder:text-gray-300 focus:outline-none" />
-                    <textarea name="description" id="description" placeholder="Add a description" className="placeholder:text-gray-300 focus:outline-none w-full"></textarea>
+                    <input 
+                        type="text" 
+                        placeholder="Issue Title" 
+                        className="font-semibold text-2xl placeholder:text-gray-300 focus:outline-none" 
+                        onChange={e => setTitle(e.target.value)}
+                        value={title}
+                    />
+                    <textarea 
+                        name="description" 
+                        id="description" 
+                        placeholder="Add a description" 
+                        className="placeholder:text-gray-300 focus:outline-none w-full"
+                        onChange={e => setDescription(e.target.value)}
+                        value={description}
+                    ></textarea>
                 </fieldset>
                 <hr className="text-slate-200" />
                 <fieldset className="grid grid-cols-2">
@@ -76,7 +97,14 @@ export default function CreateTaskModal(props) {
                     </div>
                     <div className="flex flex-col gap-6">
                         <SectionTitle>Prazo</SectionTitle>
-                        <input type="date" name="due-date" id="due-date" className="w-50 focus:outline-none" />
+                        <input 
+                            type="date" 
+                            name="due-date" 
+                            id="due-date" 
+                            className="w-50 focus:outline-none" 
+                            onChange={e => setDueDate(e.target.value)}
+                            value={dueDate}
+                        />
                     </div>
                 </fieldset>
                 <footer className="flex justify-end">

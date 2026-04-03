@@ -4,7 +4,7 @@ import TaskCard from './components/tasks/TaskCard';
 import { getGreeting } from './utils/getGreeting';
 import { formatDate } from './utils/formatDate';
 import ColumnHeader from './components/layout/ColumnHeader';
-import CreateTaskModal from './components/layout/modals/CreateTaskModal';
+import TaskModal from './components/layout/modals/TaskModal';
 
 import './App.css';
 
@@ -17,27 +17,39 @@ function App() {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const [taskToEdit, setTaskToEdit] = useState(null);
+
+  const handleOpenCreateModal = () => {
+    setTaskToEdit(null);
+    setIsModalOpen(true);
+  }
+
+  const handleOpenEditModal = (task) => {
+    setTaskToEdit(task);
+    setIsModalOpen(true);
+  }
+
   const fetchAllData = () => {
     fetch('http://localhost:3000/tasks/pending')
       .then(response => response.json())
       .then(data => {
         setPendingTasks(data);
       });
-  };
-    fetch('http://localhost:3000/tasks/metrics')
-      .then(response => response.json())
-      .then(data => {
-        setOverdatedAmount(data.overdated);
-        setPendingAmount(data.pending);
-        setCompletedAmount(data.done);
-      });
-      
-      fetch('http://localhost:3000/tasks/finished')
-        .then(response => response.json())
-        .then(data =>{
-          setFinishedTasks(data);
-        });
 
+    fetch('http://localhost:3000/tasks/metrics')
+    .then(response => response.json())
+    .then(data => {
+      setOverdatedAmount(data.overdated);
+      setPendingAmount(data.pending);
+      setCompletedAmount(data.done);
+    });
+    
+    fetch('http://localhost:3000/tasks/finished')
+    .then(response => response.json())
+    .then(data =>{
+      setFinishedTasks(data);
+    });
+  };
   useEffect(() => {
     fetchAllData();
   }, []);
@@ -62,7 +74,7 @@ function App() {
 
   return (
     <div className="flex bg-gray-200 text-slate-800 h-screen overflow-hidden">
-      <Sidebar onOpen={() => setIsModalOpen(true)} />
+      <Sidebar onOpen={handleOpenCreateModal} />
 
       <main className='flex-1 flex flex-col p-8 overflow-hidden bg-gray-100 gap-6'>
         <div className="shrink-0 mt-8">
@@ -84,6 +96,7 @@ function App() {
                     dueDate={formatDate(task.due_date)}
                     isFinished={task.is_finished}
                     onToggleStatus={() => handleToggleTaskStatus(task)}
+                    onEdit={() => handleOpenEditModal(task)}
                   />
                 ))}
               </ul>
@@ -111,11 +124,14 @@ function App() {
         </div>
       </main>
       
-      <CreateTaskModal 
-        isOpen={isModalOpen} 
-        onClose={() => setIsModalOpen(false)} 
-        onTaskCreated={fetchAllData}
-      />
+      {isModalOpen && (
+        <TaskModal 
+          isOpen={isModalOpen} 
+          onClose={() => setIsModalOpen(false)} 
+          onTaskSaved={fetchAllData}
+          taskToEdit={taskToEdit}
+        />
+      )}
     </div>
   )
 }

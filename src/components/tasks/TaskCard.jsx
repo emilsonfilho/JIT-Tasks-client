@@ -1,4 +1,4 @@
-import { Circle, CheckCircle, Calendar } from "lucide-react";
+import { Circle, CheckCircle, Calendar, PencilLine, Trash2 } from "lucide-react";
 import PriorityBadge from "../ui/PriorityBadge";
 
 export default function TaskCard(props) {
@@ -21,9 +21,19 @@ export default function TaskCard(props) {
                     <PriorityBadge priority={props.priority} isFinished={props.isFinished} priorityTitleStyle="uppercase tracking-widest text-sm font-semibold" title={`Prioridade ${props.priority.name}`} />
                 </header>
                 <p className="text-slate-500">{props.description}</p>
-                <footer className="mt-4 flex items-center gap-3 text-slate-500">
-                    <Calendar className="w-4 h-4" />
-                    <time className="uppercase font-bold tracking-widest text-sm">{props.dueDate}</time>
+                <footer className="mt-4 text-slate-500 flex justify-between">
+                    <div className="flex items-center gap-3">
+                        <Calendar className="w-4 h-4" />
+                        <time className="uppercase font-bold tracking-widest text-sm">{props.dueDate}</time>
+                    </div>
+                    <div className="flex gap-3">
+                        <button className="cursor-pointer text-slate-500 hover:text-slate-700" onClick={props.onEdit}>
+                            <PencilLine size={15} />
+                        </button>
+                        <button className="cursor-pointer text-slate-500 hover:text-slate-700" onClick={props.onDelete}>
+                            <Trash2 size={15} />
+                        </button>
+                    </div>
                 </footer>
             </div>
         </li>
