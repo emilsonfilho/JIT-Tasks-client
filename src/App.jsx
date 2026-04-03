@@ -79,7 +79,7 @@ function App() {
     }
   };
 
-  async function handleToggleTaskStatus(task) {
+  const handleToggleTaskStatus = async (task) => {
     try {
       const response = await fetch(
         `http://localhost:3000/tasks/${task.id}/status`,
