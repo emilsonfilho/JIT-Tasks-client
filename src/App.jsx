@@ -50,9 +50,28 @@ function App() {
       setFinishedTasks(data);
     });
   };
+
   useEffect(() => {
     fetchAllData();
   }, []);
+
+  const handleDeleteTask = async task => {
+    const confirmDelete = window.confirm("Essa é uma operação irreversível. Deseja continuar?") 
+    if (confirmDelete) {
+      await fetch(`http://localhost:3000/tasks/${task.id}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }).then(response => {
+        if (response.ok) {
+          fetchAllData();
+        }
+      }).catch(error => {
+        console.error("Erro ao deletar tarefa:", error);
+      });
+    }
+  }
 
   async function handleToggleTaskStatus(task) {
     try {
@@ -97,6 +116,7 @@ function App() {
                     isFinished={task.is_finished}
                     onToggleStatus={() => handleToggleTaskStatus(task)}
                     onEdit={() => handleOpenEditModal(task)}
+                    onDelete={() => handleDeleteTask(task)}
                   />
                 ))}
               </ul>
@@ -116,6 +136,8 @@ function App() {
                     dueDate={formatDate(task.due_date)}
                     isFinished={task.is_finished}
                     onToggleStatus={() => handleToggleTaskStatus(task)}
+                    onEdit={() => handleOpenEditModal(task)}
+                    onDelete={() => handleDeleteTask(task)}
                   />
                 ))}
               </ul>
