@@ -1,10 +1,9 @@
 import { CheckCircle, Plus } from 'lucide-react';
 import React from 'react';
 
-export default function Sidebar() {
+export default function Sidebar(props) {
     return (
-        <aside className="w-72 h-screen bg-white flex flex-col justify-between border-r border-gray-100 p-6">
-        {/* <aside className="w-72 bg-gray-100 p-4"> */}
+        <aside className="w-72 h-screen flex flex-col justify-between border-r border-gray-200 p-6">
           <div>
             <div className="mb-10 mt-2">
                 <h1 className='text-xl font-extrabold text-slate-900'>JIT Tasks</h1>
@@ -19,7 +18,7 @@ export default function Sidebar() {
             </nav>
           </div>
           <div>
-            <button className='w-full bg-slate-900 text-white flex items-center justify-center gap-3 py-3 rounded-xl font-semibold mb-8 shadow-sm hover:bg-slate-800 transition-colors cursor-pointer text-sm'>
+            <button className='w-full bg-slate-900 text-white flex items-center justify-center gap-3 py-3 rounded-xl font-semibold mb-8 shadow-sm hover:bg-slate-800 transition-colors cursor-pointer text-sm' onClick={props.onOpen}>
                 <Plus size={18} />
                 Nova Tarefa
             </button>
