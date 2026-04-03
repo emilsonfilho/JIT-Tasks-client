@@ -44,17 +44,13 @@ function App() {
 
   async function handleToggleTaskStatus(task) {
     try {
-      const updatedTask = { ...task, is_finished: !task.is_finished };
-
-      const response = await fetch(`http://localhost:3000/tasks/${task.id}`, {
-        method: 'PUT',
+        const response = await fetch(`http://localhost:3000/tasks/${task.id}/status`, {
+        method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(updatedTask),
+        body: JSON.stringify({ is_finished: !task.is_finished })
       });
-
-      console.log('Resposta da API:', response);
 
       if (response.ok) {
         fetchAllData();
