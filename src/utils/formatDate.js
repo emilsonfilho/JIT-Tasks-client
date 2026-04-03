@@ -1,6 +1,6 @@
 export const formatDate = (dateString) =>
-    new Intl.DateTimeFormat('pt-BR', {
-        day: '2-digit',
-        month: 'short',
-        year: 'numeric'
-    }).format(new Date(dateString));
+  new Intl.DateTimeFormat("pt-BR", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  }).format(new Date(dateString));
