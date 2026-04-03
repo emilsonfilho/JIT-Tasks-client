@@ -4,6 +4,7 @@ import TaskCard from './components/tasks/TaskCard';
 import { getGreeting } from './utils/getGreeting';
 import { formatDate } from './utils/formatDate';
 import ColumnHeader from './components/layout/ColumnHeader';
+import CreateTaskModal from './components/layout/modals/CreateTaskModal';
 
 import './App.css';
 
@@ -14,6 +15,14 @@ function App() {
   const [pendingTasks, setPendingTasks] = useState([]);
   const [finishedTasks, setFinishedTasks] = useState([]);
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const fetchPendingTasks = () => fetch('http://localhost:3000/tasks/pending')
+    .then(response => response.json())
+    .then(data => {
+      setPendingTasks(data);
+    });
+
   useEffect(() => {
     fetch('http://localhost:3000/tasks/metrics')
       .then(response => response.json())
@@ -23,24 +32,18 @@ function App() {
         setCompletedAmount(data.done);
       });
 
-    fetch('http://localhost:3000/tasks/pending')
-      .then(response => response.json())
-      .then(data => {
-        setPendingTasks(data);
-        console.log(data);
-      });
+    fetchPendingTasks();
 
     fetch('http://localhost:3000/tasks/finished')
       .then(response => response.json())
       .then(data =>{
         setFinishedTasks(data);
-        console.log(data);
       });
   }, []);
 
   return (
     <div className="flex bg-gray-200 text-slate-800 h-screen overflow-hidden">
-      <Sidebar />
+      <Sidebar onOpen={() => setIsModalOpen(true)} />
 
       <main className='flex-1 flex flex-col p-8 overflow-hidden bg-gray-100 gap-6'>
         <div className="shrink-0 mt-8">
@@ -86,6 +89,12 @@ function App() {
           </div>
         </div>
       </main>
+      
+      <CreateTaskModal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+        onTaskCreated={fetchPendingTasks}
+      />
     </div>
   )
 }

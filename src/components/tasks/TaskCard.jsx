@@ -1,10 +1,7 @@
 import { Circle, CheckCircle, Calendar } from "lucide-react";
-import { TASK_PRIORITIES } from "../../utils/constants/priorities";
+import PriorityBadge from "../ui/PriorityBadge";
 
 export default function TaskCard(props) {
-    const backgroundPriority = props.isFinished ? 'bg-gray-300' : (TASK_PRIORITIES[props.priority.id].dotColor || 'bg-gray-400');
-    const textPriority = props.isFinished ? 'text-gray-400' : (TASK_PRIORITIES[props.priority.id].textColor || 'text-gray-400');
-
     const cardBg = props.isFinished ? 'bg-gray-100' : 'bg-white';
     const titleStyle = props.isFinished ? 'line-through text-gray-400' : 'text-gray-800';
 
@@ -18,12 +15,9 @@ export default function TaskCard(props) {
                 </div>
 
                 <div className="w-full">
-                    <header className="flex justify-between">
+                    <header className="flex justify-between pb-4">
                         <h3 className={`font-bold text-normal ${titleStyle}`}>{props.title}</h3>
-                        <span className="rounded px-2 py-1">
-                            {!props.isFinished && <span className={`inline-block w-2 h-2 rounded-full mr-2 ${backgroundPriority}`}></span>}
-                            <span className={`uppercase tracking-widest rounded text-sm font-semibold ${textPriority}`}>{props.priority.name}</span>
-                        </span>
+                        <PriorityBadge priority={props.priority} isFinished={props.isFinished} priorityTitleStyle="uppercase tracking-widest text-sm font-semibold" title={`Prioridade ${props.priority.name}`} />
                     </header>
                     <p className="text-slate-500">{props.description}</p>
                     <footer className="mt-4 flex items-center gap-3 text-slate-500">

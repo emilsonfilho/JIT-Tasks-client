@@ -1,14 +1,17 @@
 export const TASK_PRIORITIES = {
     1: {
-        dotColor: 'bg-green-500',
-        textColor: 'text-green-500',
+        priorityDotColor: 'bg-slate-600',
+        priorityTextColor: 'text-slate-600',
+        priorityBgColor: 'bg-slate-100',
     },
     2: {
-        dotColor: 'bg-yellow-500',
-        textColor: 'text-yellow-500',
+        priorityDotColor: 'bg-blue-600',
+        priorityTextColor: 'text-blue-600',
+        priorityBgColor: 'bg-blue-100',
     },
     3: {
-        dotColor: 'bg-red-500',
-        textColor: 'text-red-500',
+        priorityDotColor: 'bg-red-600',
+        priorityTextColor: 'text-red-600',
+        priorityBgColor: 'bg-red-100',
     }
 }
